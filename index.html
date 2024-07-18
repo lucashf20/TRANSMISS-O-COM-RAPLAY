@@ -6,70 +6,53 @@
     <title>Replay de YouTube</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
             margin: 0;
             padding: 0;
-            background-color: #f0f0f0;
+            background-color: black;
         }
         .video-container {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            width: 320px;
-            height: 180px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 100vh;
             display: none; /* Inicialmente escondido */
-            z-index: 1000;
             background-color: black;
         }
         .video-container iframe {
             width: 100%;
             height: 100%;
         }
-        .controls {
-            margin-top: 20px;
-        }
-        a {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            color: white;
-            background-color: #007bff;
-            border-radius: 5px;
-        }
-        a:hover {
-            background-color: #0056b3;
-        }
     </style>
 </head>
 <body>
-    <h1>Replay de YouTube</h1>
-    <div class="controls">
-        <a href="https://www.youtube.com/watch?v=YOUR_YOUTUBE_VIDEO_ID" target="_blank">Abrir Vídeo</a>
-        <a href="javascript:void(0)" onclick="toggleVideo()">Play/Ocultar</a>
-    </div>
     <div class="video-container" id="video-container">
         <iframe id="youtube-video" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
 
     <script>
-        function toggleVideo() {
+        async function checkCommand() {
+            const response = await fetch('control.json');
+            const data = await response.json();
+
             var videoId = 'YOUR_YOUTUBE_VIDEO_ID'; // Substitua pelo ID do vídeo do YouTube que deseja usar
             var iframe = document.getElementById("youtube-video");
             var container = document.getElementById("video-container");
 
-            if (container.style.display === 'none' || container.style.display === '') {
+            if (data.command === 'play') {
                 iframe.src = "https://www.youtube.com/embed/" + videoId + "?autoplay=1&loop=1&playlist=" + videoId + "&start=0&end=8";
                 container.style.display = 'block';
-            } else {
+            } else if (data.command === 'stop') {
                 iframe.src = "";
                 container.style.display = 'none';
             }
         }
+
+        setInterval(checkCommand, 2000); // Verifica o comando a cada 2 segundos
     </script>
 </body>
 </html>
+
 
 
